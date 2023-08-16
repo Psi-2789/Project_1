@@ -1,0 +1,46 @@
+pipeline {
+    agent any 
+    environment {
+        //once you sign up for Docker hub, use that user_id here
+        registry = "pavan99599/pythondockerimage"
+        //- update your credentials ID after creating credentials for connecting to Docker Hub
+        registryCredential = '378dd898-ef70-40f5-8cda-bf007eb93784'
+        dockerImage = ''
+    }
+
+    stages {
+        stage('Cloning Git') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'f433645d-9c66-426e-9226-723e8bd9589f', url:'https://github.com/Psi-2789/Project_1.git']]])
+        }
+     }
+
+    // Building Docker images
+     stage('Building image') {
+        steps{
+            script {
+                dockerImage = docker.build registry
+            }
+        }
+     }
+
+    // Uploading Docker images into Docker Hub
+    stage('Upload Image') {
+        steps{
+            script {
+                docker.withRegistry( '', registryCredential ) {
+                dockerImage.push()
+         }
+    }
+    }
+    }
+     // Running Docker container, make sure port 8096 is opened in 
+    stage('Docker Run') {
+     steps{
+         script {
+           bat "docker run  %registry%"
+         }
+      }
+    }
+    }
+}
