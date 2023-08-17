@@ -8,7 +8,7 @@ COPY . /app
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-EXPOSE 8080
+EXPOSE 8096
 
 # Run your script when the container launches
 CMD ["python", "netflix_ui_automation.py"]
